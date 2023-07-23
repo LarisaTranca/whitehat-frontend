@@ -1,0 +1,47 @@
+<mat-card class="games-card">
+  <mat-card-content>
+    <h2 class="header">Games</h2>
+    <ng-container *ngIf="showPreloader">
+      <mat-progress-spinner class="preloader" color="primary" mode="determinate" value="50">
+      </mat-progress-spinner>
+    </ng-container>
+    <ng-container *ngIf="!showPreloader">
+      <mat-form-field class="category-select">
+        <mat-label>Category</mat-label>
+        <mat-select (selectionChange)="onCategoryChange($event.value, selectedCategory)" [(ngModel)]="selectedCategory">
+          <mat-option *ngFor="let category of categories" [value]="category.value">
+            {{category.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <ng-container *ngIf="gamesLength">
+        <mat-grid-list cols="2" rowHeight="280px">
+          <mat-grid-tile *ngFor="let game of games">
+            <mat-card class="game-card" (click)="showLaunchCode(game)">
+              <mat-card-content class="game-card-content">
+                <img mat-card-image src="{{ game.image }}" alt="Game image" />
+                <div>
+                  <div>
+                    <h2>{{ game.name }}
+                      <span *ngIf="game.hot" class="badge hot-badge">HOT</span>
+                      <span *ngIf="game.new" class="badge new-badge">NEW</span>
+                    </h2>
+                  </div>
+                  <h3 *ngIf="game.provider" class="game-provider">Provider: {{ game.provider.name }}</h3>
+                  <div *ngIf="game.rtp">RTP: {{game.rtp}}%</div>
+                  <div *ngIf="game.category">Category: {{game.category | titlecase}}</div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </mat-grid-tile>
+        </mat-grid-list>
+        <mat-paginator #paginator [length]="gamesLength" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+          [pageIndex]="pageIndex" (page)="onPageChanged($event)" aria-label="Select page">
+        </mat-paginator>
+      </ng-container>
+      <ng-container *ngIf="!gamesLength">
+        <h3>No games were found!</h3>
+      </ng-container>
+    </ng-container>
+  </mat-card-content>
+</mat-card>
